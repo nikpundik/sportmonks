@@ -17,7 +17,14 @@ export class SportmonksApi {
                 }
                 const body: any[] = [];
                 response.on('data', (chunk) => body.push(chunk));
-                response.on('end', () => resolve( JSON.parse(body.join('')) ));
+                response.on('end', () => {
+                    try {
+                        const parsedBody = JSON.parse(body.join(''));
+                        resolve(parsedBody);
+                    } catch (e) {
+                        reject(new Error('Failed to parse response: ' + e.message));
+                    }
+                });
             });
             request.on('error', (err) => reject(err) );
         })
